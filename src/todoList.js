@@ -1,5 +1,5 @@
-import Project from "./Project";
-import Task from ".Task";
+import Project from "./project";
+import Task from "./task";
 import {compareAsc, toDate} from "date-fns";
 
 export default class TodoList {
@@ -45,7 +45,7 @@ export default class TodoList {
             const todayTasks = project.getTodayTasks();
             todayTasks.forEach((task) => {
                 const taskName = `${task.getName()} (${project.getName()})`;
-                this.getProject("Today").addTask(new Task(taskName, task.getDescription(), task.getDate(), task.getPriority()));
+                this.getProject("Today").addTask(new Task(taskName, task.getDate()));
             });
         });
     }
@@ -59,7 +59,7 @@ export default class TodoList {
             const weekTasks = project.getWeekTasks();
             weekTasks.forEach((task) => {
                 const taskName = `${task.getName()} (${project.getName()})`;
-                this.getProject("This week").addTask(new Task(taskName, task.getDescription(), task.getDate(), task.getPriority()));
+                this.getProject("This week").addTask(new Task(taskName, task.getDate()));
             });
         });
 

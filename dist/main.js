@@ -1,1 +1,1 @@
-console.log("hi");
+(()=>{"use strict";console.log("hi"),document.getElementById("content").appendChild(function(){const e=document.createElement("header");e.classList.add("header");const t=document.createElement("h1");return t.classList.add("page-name"),t.textContent="Todo List",e.appendChild(t),e}())})();
