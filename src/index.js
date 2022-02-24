@@ -78,6 +78,7 @@ function createToday() {
                 project.name !== "This week"
             ) {
                 createProject(project.name);
+                console.log("test");
             }
         });
 
@@ -86,7 +87,7 @@ function createToday() {
 
 function loadToday() {
     const main = document.getElementById("main");
-    main.textContent = "";
+    //main.textContent = "";
     main.appendChild(createToday());
 
 
@@ -101,19 +102,41 @@ function createMain() {
     createProjectButton.classList.add("button-main");
     createProjectButton.textContent = "Create Project";
     createProjectButton.addEventListener("click", (e) => {
-        createProject();
+        const projectName = prompt("Please enter a project name");
+        if (projectName === "") {
+            alert("Project name can not be empty");
+            return;
+        }
+        if (Storage.getTodoList().contains(projectName)) {
+            alert("You can not have a duplicate project name");
+            return;
+        }
+
+        Storage.addProject(new Project(projectName));
     });
 
     const createTaskButton = document.createElement("button");
     createTaskButton.classList.add("button-main");
     createTaskButton.textContent = "Create Task";
     createTaskButton.addEventListener("click", (e) => {
-        createTask();
+        const taskName = prompt("Please enter a task name");
+        const taskDescription = prompt("Please enter a task description");
+        const taskDate = prompt("Please enter a due date");
+        const taskPriority = prompt("Please enter a task priority");
+
+        const newTask = new Task(taskName, taskDescription, taskDate, taskPriority);
     });
 
     main.appendChild(createProjectButton);
     main.appendChild(createTaskButton);
+
     return main;
+}
+
+function createProject(name) {
+    const savedProjects = document.getElementById("main");
+    savedProjects.innerHTML += `
+        <br><span>${name}</span>`
 }
 
 function loadPage() {
@@ -123,7 +146,7 @@ function loadPage() {
 
     setActiveButton(document.querySelector(".button-nav"));
 
-    //loadToday();
+    loadToday();
 }
 
 loadPage();

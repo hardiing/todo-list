@@ -3,14 +3,14 @@ import Task from "./task";
 import TodoList from "./todoList";
 
 export default class Storage {
-    saveTodoList(data) {
+    static saveTodoList(data) {
         localStorage.setItem("todoList", JSON.stringify(data));
     }
 
-    getTodoList() {
+    static getTodoList() {
         const todoList = Object.assign(
             new TodoList(), 
-            JSON.parse(localStorage.getitem("todoList"))
+            JSON.parse(localStorage.getItem("todoList"))
         );
 
         todoList.setProjects(
@@ -28,49 +28,49 @@ export default class Storage {
         return todoList;
     }
 
-    addProject(project) {
+    static addProject(project) {
         const todoList = Storage.getTodoList();
         todoList.addProject(project);
         Storage.saveTodoList(todoList);
     }
 
-    deleteProject(project) {
+    static deleteProject(project) {
         const todoList = Storage.getTodoList();
         todoList.deleteProject(project);
         Storage.saveTodoList(todoList);
     }
 
-    addTask(project, task) {
+    static addTask(project, task) {
         const todoList = Storage.getTodoList();
         todoList.getProject(project).addTask(task);
         Storage.saveTodoList(todoList);
     }
 
-    deleteTask(project, task) {
+    static deleteTask(project, task) {
         const todoList = Storage.getTodoList();
         todoList.getProject(project).deleteTask(task);
         Storage.saveTodoList(todoList);
     }
 
-    renameTask(project, task, newTask) {
+    static renameTask(project, task, newTask) {
         const todoList = Storage.getTodoList();
         todoList.getProject(project).getTask(task).setName(newTask);
         Storage.saveTodoList(todoList);
     }
 
-    setTaskDate(project, task, date) {
+    static setTaskDate(project, task, date) {
         const todoList = Storage.getTodoList();
         todoList.getProject(project).getTask(task).setDate(date);
         Storage.saveTodoList(todoList);
     }
 
-    updateToday() {
+    static updateToday() {
         const todoList = Storage.getTodoList();
         todoList.updateTodayProjects();
         Storage.saveTodoList(todoList);
     }
 
-    updateWeek() {
+    static updateWeek() {
         const todoList = Storage.getTodoList();
         todoList.updateWeekProjects();
         Storage.saveTodoList(todoList);
