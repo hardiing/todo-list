@@ -50,6 +50,43 @@ function createNav() {
     nav.appendChild(allButton);
     nav.appendChild(todayButton);
     nav.appendChild(weekButton);
+    nav.innerHTML += `<br>`
+
+    const createProjectButton = document.createElement("button");
+    createProjectButton.classList.add("button-main");
+    createProjectButton.textContent = "Create Project";
+    createProjectButton.addEventListener("click", (e) => {
+        const projectName = prompt("Please enter a project name");
+        if (projectName === "") {
+            alert("Project name can not be empty");
+            return;
+        } else {
+            Storage.addProject(new Project(projectName));
+        }
+        if (Storage.getTodoList().contains(projectName)) {
+            alert("You can not have a duplicate project name");
+            return;
+        } else {
+            Storage.addProject(new Project(projectName));
+        }
+
+        loadProjects();
+    });
+
+    const createTaskButton = document.createElement("button");
+    createTaskButton.classList.add("button-main");
+    createTaskButton.textContent = "Create Task";
+    createTaskButton.addEventListener("click", (e) => {
+        const taskName = prompt("Please enter a task name");
+        const taskDescription = prompt("Please enter a task description");
+        const taskDate = prompt("Please enter a due date");
+        const taskPriority = prompt("Please enter a task priority");
+
+        const newTask = new Task(taskName, taskDescription, taskDate, taskPriority);
+    });
+
+    nav.appendChild(createProjectButton);
+    nav.appendChild(createTaskButton);
 
     return nav;
 }
@@ -69,6 +106,26 @@ function setActiveButton(button) {
 function createToday() {
     const today = document.createElement("div");
     today.classList.add("today-tasks");
+
+    return today;
+}
+
+function loadToday() {
+    const main = document.getElementById("main");
+    main.appendChild(createToday());
+}
+
+function createMain() {
+    const main = document.createElement("main");
+    main.classList.add("main");
+    main.setAttribute("id", "main");
+
+    return main;
+}
+
+function loadProjects() {
+    const mainArea = document.getElementById("main");
+    mainArea.textContent = "";
     Storage.getTodoList()
         .getProjects()
         .forEach((project) => {
@@ -78,47 +135,12 @@ function createToday() {
                 project.name !== "This week"
             ) {
                 createProject(project.name);
-                console.log("test");
+                console.log("loadProjects if");
             }
         });
 
-    return today;
-}
-
-function loadToday() {
-    const main = document.getElementById("main");
-    //main.textContent = "";
-    main.appendChild(createToday());
-
-
-}
-
-function createMain() {
-    const main = document.createElement("main");
-    main.classList.add("main");
-    main.setAttribute("id", "main");
-
-    const createProjectButton = document.createElement("button");
-    createProjectButton.classList.add("button-main");
-    createProjectButton.textContent = "Create Project";
-    createProjectButton.addEventListener("click", (e) => {
-        const projectName = prompt("Please enter a project name");
-        if (projectName === "") {
-            alert("Project name can not be empty");
-            return;
-        }
-        if (Storage.getTodoList().contains(projectName)) {
-            alert("You can not have a duplicate project name");
-            return;
-        }
-
-        Storage.addProject(new Project(projectName));
-    });
-
-    const createTaskButton = document.createElement("button");
-    createTaskButton.classList.add("button-main");
-    createTaskButton.textContent = "Create Task";
-    createTaskButton.addEventListener("click", (e) => {
+    const addTaskButton = document.getElementById("add-task");
+    addTaskButton.addEventListener("click", (e) => {
         const taskName = prompt("Please enter a task name");
         const taskDescription = prompt("Please enter a task description");
         const taskDate = prompt("Please enter a due date");
@@ -127,16 +149,60 @@ function createMain() {
         const newTask = new Task(taskName, taskDescription, taskDate, taskPriority);
     });
 
-    main.appendChild(createProjectButton);
-    main.appendChild(createTaskButton);
-
-    return main;
 }
 
 function createProject(name) {
-    const savedProjects = document.getElementById("main");
+    const main = document.getElementById("main")
+    const savedProjects = document.createElement("div");
+    savedProjects.classList.add("projects-list");
     savedProjects.innerHTML += `
-        <br><span>${name}</span>`
+        <h2 id="current-project">${name}&emsp;
+        <button class="project-button" id="open-project">Open Project</button>
+        <button id="add-task">Add Task</button>
+        <button class="project-button" id="delete-project">Delete Project</button>
+        </h2><br>
+        <div class="task-list></div>`
+    main.appendChild(savedProjects);
+}
+
+function openProject(projectName, projectButton) {
+    const projectButtons = document.querySelectorAll("project-button");
+    projectButtons.forEach((button) => button.classList.remove("active"));
+    projectButton.classList.add("active");
+    projectContent(projectName);
+}
+
+function projectContent(projectName) {
+    const contents = document.getElementById("task-list");
+    loadTasks();
+}
+function loadTasks(projectName) {
+    console.log(projectName.textContent);
+    Storage.getTodoList()
+        .getProject(projectName)
+        .getTasks()
+        .forEach((task) => createTask(task.name, task.dueDate));
+}
+
+function createTask(name, dueDate) {
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML += `
+        <p>${name}${dueDate}</p>`
+}
+
+function projectButtons() {
+    const projectButtons = document.querySelectorAll(".project-button");
+    console.log(projectButtons);
+    projectButtons.forEach((projectButton) => {
+        projectButton.addEventListener("click", handleProjectButton
+    )});
+}
+
+function handleProjectButton(e) {
+    console.log(this);
+    console.log(this.parentNode.textContent);
+    const currentProject = this.parentNode.textContent;
+    openProject(currentProject, this);
 }
 
 function loadPage() {
@@ -146,7 +212,8 @@ function loadPage() {
 
     setActiveButton(document.querySelector(".button-nav"));
 
-    loadToday();
+    loadProjects();
+    projectButtons();
 }
 
 loadPage();
